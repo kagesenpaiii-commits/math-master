@@ -41,15 +41,21 @@
         }
         .grade-card:hover { border-color: #38bdf8; background: #1e293b; transform: translateY(-3px); }
 
-        /* Шалгалтын болон Бодлогын хэсэг */
+        /* Бодлогын хэсэг */
         .question-card { background: #0f172a; padding: 1.5rem; border-radius: 12px; border: 1px solid #334155; margin-bottom: 1rem; }
-        .question-text { font-size: 1.2rem; margin-bottom: 1rem; font-weight: 500; }
+        .question-text { font-size: 1.2rem; margin-bottom: 1rem; font-weight: 500; line-height: 1.5; }
         .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .option-btn {
             background: #1e293b; padding: 12px; border-radius: 8px; border: 1px solid #334155;
             color: #fff; cursor: pointer; text-align: left; font-size: 1rem; transition: background 0.2s;
         }
         .option-btn:hover:not(:disabled) { border-color: #38bdf8; }
+
+        /* Дэлгэрэнгүй бодолтын блок (Зөв хариулсан үед л харагдана) */
+        .solution-box {
+            display: none; margin-top: 1.2rem; background: #064e3b; border: 1px solid #10b981;
+            padding: 1rem; border-radius: 8px; color: #ecfdf5; font-size: 0.95rem; line-height: 1.6;
+        }
 
         /* Хүнд / Дунд / Хөнгөн товчлуур */
         .diff-container { display: flex; gap: 10px; margin-bottom: 1.5rem; }
@@ -137,7 +143,7 @@
                 </div>
             </div>
 
-            <!-- Зэрэглэлийн товчнууд (Хөнгөн / Дунд / Хүнд) -->
+            <!-- Зэрэглэлийн товчнууд -->
             <div class="diff-container">
                 <div class="diff-btn active" id="btnEasy" onclick="switchDifficulty('easy')">🟢 Хөнгөн (+5 оноо)</div>
                 <div class="diff-btn locked" id="btnMedium" onclick="switchDifficulty('medium')">🔒 Дунд (50 оноо)</div>
@@ -149,6 +155,12 @@
                 <div style="font-size:0.85rem; color:#94a3b8; margin-bottom:5px;" id="problemCategory">1-р түвшний бодлого</div>
                 <div class="question-text" id="problemQuestion">Бодлого ачаалж байна...</div>
                 <div class="options-grid" id="practiceOptions"></div>
+                
+                <!-- ЗӨВХӨН ЗӨВ БОДСОН ҮЕД ХАРАГДАХ ДЭЛГЭРЭНГҮЙ БОДОЛТ -->
+                <div class="solution-box" id="solutionBox">
+                    <strong style="color: #34d399;">💡 Дэлгэрэнгүй бодолт:</strong>
+                    <div id="solutionText" style="margin-top: 5px;"></div>
+                </div>
             </div>
 
             <button class="btn-primary" id="nextProbBtn" style="display:none;" onclick="loadNextProblem()">Дараагийн бодлого ➔</button>
@@ -174,32 +186,36 @@
             ]
         };
 
-        // ТҮВШИН БҮРД ТОХИРСОН ДИНАМИК БОДЛОГЫН САН (1-8-р түвшин)
+        // ТҮВШИН БҮРД ТОХИРСОН ӨРГӨТГӨСӨН БОДЛОГЫН САН (Түүвэрлэж санамсаргүй сонгоно)
         const practiceDb = {
-            // 1-Р ТҮВШИН (Эхлэн суралцагч)
             1: {
                 easy: [
-                    { q: "$15 + 27 = ?$", opts: ["42", "41", "32", "52"], a: 0 },
-                    { q: "$2^3 = ?$", opts: ["8", "6", "9", "4"], a: 0 }
+                    { q: "$25 + 37 = ?$", opts: ["62", "61", "52", "72"], a: 0, sol: "$25 + 37 = 62$ болно." },
+                    { q: "$3^3 = ?$", opts: ["27", "9", "18", "81"], a: 0, sol: "$3 \\times 3 \\times 3 = 27$ байна." },
+                    { q: "Хэрэв $x - 8 = 15$ бол $x = ?$", opts: ["23", "7", "22", "13"], a: 0, sol: "$x = 15 + 8 = 23$ болно." },
+                    { q: "$\\sqrt{64} = ?$", opts: ["8", "6", "16", "32"], a: 0, sol: "$8 \\times 8 = 64$ тул язгуур нь 8." },
+                    { q: "$5 \\times (4 + 3) = ?$", opts: ["35", "23", "20", "30"], a: 0, sol: "Хаалтан доторхыг эхэлж бодно: $4+3=7$. Дараа нь $5 \\times 7 = 35$." },
+                    { q: "$100 \\div 4 = ?$", opts: ["25", "20", "50", "15"], a: 0, sol: "$100 \\div 4 = 25$." }
                 ],
                 medium: [
-                    { q: "Хэрэв $x + 5 = 12$ бол $x = ?$", opts: ["7", "6", "8", "17"], a: 0 }
+                    { q: "$2x + 6 = 18$ бол $x = ?$", opts: ["6", "12", "8", "4"], a: 0, sol: "$2x = 18 - 6 \\Rightarrow 2x = 12 \\Rightarrow x = 6$." },
+                    { q: "$x^2 = 81$ тэгшитгэлийн эерэг шийдийг ол.", opts: ["9", "8", "7", "81"], a: 0, sol: "$9^2 = 81$ тул шийд нь 9." }
                 ],
                 hard: [
-                    { q: "$x^2 = 49$ тэгшитгэлийн эх шийдийг ол.", opts: ["7", "6", "8", "5"], a: 0 }
+                    { q: "Парабол $y = x^2 - 4$-ийн $y$ тэнхлэгийг огтлох цэгийг ол.", opts: ["(0, -4)", "(0, 4)", "(2, 0)", "(-2, 0)"], a: 0, sol: "$x=0$ үед $y = 0^2 - 4 = -4$ тул цэг нь $(0, -4)$." }
                 ]
             },
-            // 8-Р ТҮВШИН (Гүнзгий - Олимпиад шат)
             8: {
                 easy: [
-                    { q: "$\\sin^2(x) + \\cos^2(x) + \\tan(45^\\circ) = ?$", opts: ["2", "1", "0", "3"], a: 0 },
-                    { q: "$\\log_5(125) = ?$", opts: ["3", "5", "2", "25"], a: 0 }
+                    { q: "$\\sin^2(x) + \\cos^2(x) + \\tan(45^\\circ) = ?$", opts: ["2", "1", "0", "3"], a: 0, sol: "$\\sin^2(x)+\\cos^2(x)=1$ ба $\\tan(45^\\circ)=1$ тул $1+1=2$." },
+                    { q: "$\\log_5(125) = ?$", opts: ["3", "5", "2", "25"], a: 0, sol: "$5^3 = 125$ тул $\\log_5(125) = 3$." },
+                    { q: "$e^{\\ln 10} = ?$", opts: ["10", "e", "1", "10e"], a: 0, sol: "Илтгэгч болон логарифм харилцан эсрэг үйлдэл тул $e^{\\ln x} = x \\Rightarrow 10$." }
                 ],
                 medium: [
-                    { q: "$\\int_0^1 3x^2 dx = ?$", opts: ["1", "3", "0", "2"], a: 0 }
+                    { q: "$\\int_0^1 3x^2 dx = ?$", opts: ["1", "3", "0", "2"], a: 0, sol: "Интеграл нь $[x^3]_0^1 = 1^3 - 0^3 = 1$." }
                 ],
                 hard: [
-                    { q: "$\\lim_{x \\to 0} \\frac{1 - \\cos(x)}{x^2} = ?$", opts: ["1/2", "1", "0", "2"], a: 0 }
+                    { q: "$\\lim_{x \\to 0} \\frac{1 - \\cos(x)}{x^2} = ?$", opts: ["1/2", "1", "0", "2"], a: 0, sol: "Тайлорын цуваа эсвэл Лопиталын дүрмээр шийд нь $\\frac{1}{2}$ гарна." }
                 ]
             }
         };
@@ -209,6 +225,7 @@
         let selectedGrade = 10;
         let currentDiff = 'easy';
         let currentProb = null;
+        let usedIndices = []; // Ашигласан бодлогуудын индекс
 
         window.onload = function() {
             activeUser = JSON.parse(localStorage.getItem('mm_active_user'));
@@ -281,7 +298,6 @@
 
             const percent = Math.round((correct / questions.length) * 100);
             
-            // 1-8 ТҮВШИН ТОГТООХ ЛОГИК
             let level = 1;
             if (percent >= 90) level = 8;
             else if (percent >= 80) level = 7;
@@ -331,6 +347,7 @@
             if (diff === 'hard' && score < 100) return alert("Хүнд түвшинг нээхийн тулд 100 оноо цуглуулаарай!");
 
             currentDiff = diff;
+            usedIndices = []; // Өөр шат руу шилжихэд индексыг цэвэрлэнэ
             document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('active'));
             if(diff === 'easy') document.getElementById('btnEasy').classList.add('active');
             if(diff === 'medium') document.getElementById('btnMedium').classList.add('active');
@@ -339,15 +356,27 @@
             loadNextProblem();
         }
 
+        // БОДЛОГЫГ САНАМСАРГҮЙ ТҮҮЖ АВАХ ФУНКЦ (БОДЛОГО ДАВТАГДАХГҮЙ)
         function loadNextProblem() {
             document.getElementById('nextProbBtn').style.display = 'none';
+            document.getElementById('solutionBox').style.display = 'none'; // Бодолтыг нууна
+
             const userLvl = activeUser.level || 1;
-            
-            // Түвшинд тохирсон сангаас бодлого сонгох (байхгүй бол 1 эсвэл 8-аас авна)
             const levelSet = practiceDb[userLvl] || practiceDb[1];
             const pool = levelSet[currentDiff] || levelSet['easy'];
 
-            currentProb = pool[Math.floor(Math.random() * pool.length)];
+            // БҮХ БОДЛОГЫГ БОДОЖ ДУУССАН БОЛ ЭРГЭЭД ШҮҮНЭ
+            if (usedIndices.length >= pool.length) {
+                usedIndices = [];
+            }
+
+            let randIdx;
+            do {
+                randIdx = Math.floor(Math.random() * pool.length);
+            } while (usedIndices.includes(randIdx) && pool.length > 1);
+
+            usedIndices.push(randIdx);
+            currentProb = pool[randIdx];
 
             document.getElementById('problemCategory').innerText = `${userLvl}-р түвшин | ${currentDiff === 'easy' ? 'Хөнгөн' : currentDiff === 'medium' ? 'Дунд' : 'Хүнд'} бодлого`;
             document.getElementById('problemQuestion').innerHTML = currentProb.q;
@@ -365,6 +394,7 @@
             const btns = document.querySelectorAll('#practiceOptions .option-btn');
             btns.forEach(b => b.disabled = true);
 
+            // 1. ЗӨВ БОДСОН ЭСЭХИЙГ ШАЛГАХ
             if (selectedIdx === currentProb.a) {
                 btn.style.background = '#10b981';
                 let addPoints = currentDiff === 'easy' ? 5 : (currentDiff === 'medium' ? 10 : 15);
@@ -373,12 +403,19 @@
                 confetti({ particleCount: 40, spread: 50 });
                 saveUserData();
                 updateLockStatus();
+
+                // ЗӨВ БОДСОН ҮЕД ДЭЛГЭРЭНГҮЙ БОДОЛТЫГ ХАРУУЛНА
+                document.getElementById('solutionText').innerHTML = currentProb.sol || "Бодолт тодорхойлогдоогүй байна.";
+                document.getElementById('solutionBox').style.display = 'block';
+
             } else {
+                // БУРУУ БОДСОН ҮЕД (Бодолт харагдахгүй, зөв хариуг нь ногооноор сануулна)
                 btn.style.background = '#ef4444';
                 btns[currentProb.a].style.background = '#10b981';
             }
 
             document.getElementById('nextProbBtn').style.display = 'block';
+            if (window.MathJax) MathJax.typesetPromise();
         }
 
         function saveUserData() {
