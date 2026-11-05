@@ -3,303 +3,290 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MathMaster MN - Нэвтрэх хэсэг</title>
+    <title>MathMaster MN - Түвшин тогтоох шалгалт</title>
     
+    <!-- MathJax (Математик томьёо харуулах сан) -->
+    <script>
+        MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Arial, sans-serif;
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
+        body { background-color: #0f172a; color: #f8fafc; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        
+        .main-card {
+            background: #1e293b; padding: 2rem; border-radius: 16px; width: 100%; max-width: 650px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5); border: 1px solid #334155;
         }
+        .title { font-size: 1.8rem; color: #38bdf8; text-align: center; margin-bottom: 0.5rem; font-weight: bold; }
+        .subtitle { color: #94a3b8; text-align: center; font-size: 0.95rem; margin-bottom: 1.5rem; }
+        
+        .form-group { margin-bottom: 1.2rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; color: #cbd5e1; font-size: 0.9rem; }
+        .form-input { width: 100%; padding: 12px; border-radius: 8px; border: 2px solid #334155; background: #0f172a; color: #fff; font-size: 1rem; outline: none; }
+        
+        .btn-primary { width: 100%; background: #2563eb; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 0.5rem; }
+        .btn-primary:hover { background: #1d4ed8; }
 
-        body {
-            background-color: #0f172a;
-            color: #f8fafc;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+        /* Анги сонгох карт */
+        .grade-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 1.5rem 0; }
+        .grade-card {
+            background: #0f172a; border: 2px solid #334155; padding: 20px; border-radius: 12px;
+            text-align: center; cursor: pointer; transition: all 0.2s; font-size: 1.2rem; font-weight: bold;
         }
+        .grade-card:hover { border-color: #38bdf8; background: #1e293b; transform: translateY(-3px); }
 
-        .auth-card {
-            background: #1e293b;
-            padding: 2.5rem;
-            border-radius: 16px;
-            width: 100%;
-            max-width: 420px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-            border: 1px solid #334155;
+        /* Шалгалтын хэсэг */
+        .question-card { background: #0f172a; padding: 1.2rem; border-radius: 10px; border: 1px solid #334155; margin-bottom: 1rem; }
+        .question-text { font-size: 1.1rem; margin-bottom: 1rem; font-weight: 500; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .option-label {
+            background: #1e293b; padding: 10px; border-radius: 6px; border: 1px solid #334155;
+            cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.95rem;
         }
+        .option-label:hover { border-color: #38bdf8; }
 
-        .auth-title {
-            font-size: 1.8rem;
-            color: #38bdf8;
-            text-align: center;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-        }
-
-        .auth-subtitle {
-            color: #94a3b8;
-            text-align: center;
-            font-size: 0.95rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.2rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #cbd5e1;
-            font-size: 0.9rem;
-        }
-
-        .form-input {
-            width: 100%;
-            padding: 12px 15px;
-            border-radius: 8px;
-            border: 2px solid #334155;
-            background: #0f172a;
-            color: #fff;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .form-input:focus {
-            border-color: #38bdf8;
-        }
-
-        .btn-primary {
-            width: 100%;
-            background: #2563eb;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            margin-top: 0.5rem;
-            transition: background 0.2s;
-        }
-
-        .btn-primary:hover {
-            background: #1d4ed8;
-        }
-
-        .switch-mode {
-            text-align: center;
-            margin-top: 1.5rem;
-            color: #94a3b8;
-            font-size: 0.9rem;
-        }
-
-        .switch-mode a {
-            color: #38bdf8;
-            text-decoration: none;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .switch-mode a:hover {
-            text-decoration: underline;
-        }
-
-        /* Амжилттай нэвтэрсний дараа харагдах демо самбар */
-        .dashboard {
-            display: none;
-            text-align: center;
-        }
-
-        .user-info {
-            background: #0f172a;
-            padding: 1.5rem;
-            border-radius: 12px;
-            border: 1px solid #334155;
-            margin-top: 1rem;
-        }
-
-        .logout-btn {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 1rem;
-            font-weight: bold;
-        }
+        /* Үр дүнгийн хуудас */
+        .result-box { text-align: center; padding: 1.5rem; background: #0f172a; border-radius: 12px; border: 1px solid #334155; margin-top: 1rem; }
+        .level-badge { font-size: 2rem; font-weight: bold; color: #f59e0b; margin: 10px 0; }
+        
+        .switch-mode { text-align: center; margin-top: 1rem; color: #94a3b8; font-size: 0.9rem; }
+        .switch-mode a { color: #38bdf8; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="auth-card">
+    <div class="main-card">
         
-        <!-- 1. БҮРТГҮҮЛЭХ / НЭВТРЭХ ФОРМ -->
-        <div id="authFormSection">
-            <h2 class="auth-title" id="formTitle">MathMaster MN</h2>
-            <p class="auth-subtitle" id="formSubtitle">Системд нэвтэрч оноогоо цуглуулаарай</p>
+        <!-- 1. НЭВТРЭХ & БҮРТГҮҮЛЭХ -->
+        <div id="authSection">
+            <h2 class="title" id="authTitle">MathMaster MN</h2>
+            <p class="subtitle" id="authSubtitle">Нэвтрэн орж түвшин тогтоох шалгалтаа өгөөрэй</p>
 
-            <form id="authForm" onsubmit="handleAuth(event)">
-                <!-- Бүртгүүлэх үед л харагдана -->
+            <form onsubmit="handleAuth(event)">
                 <div class="form-group" id="nameGroup" style="display: none;">
-                    <label for="fullName">Сурагчийн нэр ба анги</label>
-                    <input type="text" id="fullName" class="form-input" placeholder="Жишээ: Анар (10А)">
+                    <label>Сурагчийн нэр</label>
+                    <input type="text" id="fullName" class="form-input" placeholder="Жишээ: Анар">
                 </div>
-
                 <div class="form-group">
-                    <label for="emailInput">Цахим шуудан (Имэйл)</label>
-                    <input type="email" id="emailInput" class="form-input" placeholder="name@example.com" required>
+                    <label>Цахим шуудан (Имэйл)</label>
+                    <input type="email" id="emailInput" class="form-input" required placeholder="name@example.com">
                 </div>
-
                 <div class="form-group">
-                    <label for="passwordInput">Нууц үг</label>
-                    <input type="password" id="passwordInput" class="form-input" placeholder="••••••••" required>
+                    <label>Нууц үг</label>
+                    <input type="password" id="passwordInput" class="form-input" required placeholder="••••••••">
                 </div>
-
                 <button type="submit" class="btn-primary" id="submitBtn">Нэвтрэх</button>
             </form>
-
             <div class="switch-mode">
                 <span id="switchText">Шинэ сурагч уу?</span>
-                <a onclick="toggleMode()" id="switchLink">Шинээр бүртгүүлэх</a>
+                <a onclick="toggleAuthMode()" id="switchLink">Шинээр бүртгүүлэх</a>
             </div>
         </div>
 
-        <!-- 2. НЭВТЭРСНИЙ ДАРААХ ТУРШИЛТЫН СҮЛЖЭЭ (ДАХИН ДАВТАГДАШГҮЙ ПРОФАЙЛ) -->
-        <div id="dashboardSection" class="dashboard">
-            <h2 style="color: #10b981; margin-bottom: 0.5rem;">Амжилттай нэвтэрлээ! 🎉</h2>
-            <div class="user-info">
-                <p style="font-size: 1.1rem; color: #fff; margin-bottom: 5px;">
-                    👤 Нэр: <strong id="userDisplayName">...</strong>
-                </p>
-                <p style="color: #94a3b8; font-size: 0.9em; margin-bottom: 10px;">
-                    ✉️ ID (Имэйл): <span id="userDisplayEmail">...</span>
-                </p>
-                <div style="background: #1e293b; padding: 10px; border-radius: 8px; color: #f59e0b; font-weight: bold;">
-                    ★ Авсан оноо: <span id="userScore">0</span> оноо
-                </div>
+        <!-- 2. АНГИ СОНГОХ -->
+        <div id="gradeSection" style="display: none;">
+            <h2 class="title">Ангиа сонгоно уу</h2>
+            <p class="subtitle">Та аль ангийн түвшин тогтоох шалгалт өгөх вэ?</p>
+            <div class="grade-grid">
+                <div class="grade-card" onclick="startTest(10)">10-р Анги</div>
+                <div class="grade-card" onclick="startTest(11)">11-р Анги</div>
+                <div class="grade-card" onclick="startTest(12)">12-р Анги</div>
             </div>
-            <button class="logout-btn" onclick="logout()">Системээс гарах</button>
+        </div>
+
+        <!-- 3. ТҮВШИН ТОГТООХ ШАЛГАЛТ -->
+        <div id="testSection" style="display: none;">
+            <h2 class="title" id="testTitle">Түвшин тогтоох шалгалт</h2>
+            <p class="subtitle">Бодлогуудыг бодон зөв хариултыг сонгоорой</p>
+            
+            <form id="quizForm" onsubmit="submitTest(event)">
+                <div id="questionsContainer"></div>
+                <button type="submit" class="btn-primary" style="margin-top: 1rem;">Шалгалт дуусгах ба Дүгнэх</button>
+            </form>
+        </div>
+
+        <!-- 4. ШАЛГАЛТЫН ҮР ДҮН ЖИШЭЭ -->
+        <div id="resultSection" style="display: none;">
+            <h2 class="title">Түвшин тогтоогдлоо! 🎉</h2>
+            <div class="result-box">
+                <p style="color: #cbd5e1;">Сурагч: <strong id="resName">...</strong> (<span id="resGrade"></span>-р анги)</p>
+                <div style="font-size: 1.2rem; margin-top: 10px;">Авсан оноо: <span id="resScore" style="color:#10b981; font-weight:bold;">0%</span></div>
+                <div class="level-badge" id="resLevel">1-р Түвшин</div>
+                <p style="color: #94a3b8; font-size: 0.9rem;" id="resDesc">Танд тохирсон хичээлүүдийг бэлдлээ.</p>
+            </div>
+            <button class="btn-primary" onclick="restartPlacement()" style="margin-top: 1rem; background: #334155;">Анги эсвэл Шалгалт дахин өгөх</button>
         </div>
 
     </div>
 
     <script>
-        let isSignUpMode = false; // Эхэндээ "Нэвтрэх" горимтой байна
+        // АНГИ БҮРИЙН ТҮВШИН ТОГТООХ БОДЛОГУУД (Бодлого нэмэх боломжтой)
+        const placementTests = {
+            10: [
+                { q: "1. $36^{\\frac{1}{2}} + 27^{\\frac{1}{3}} = ?$", opts: ["9", "8", "12", "15"], a: 0 },
+                { q: "2. $x^2 - 5x + 6 = 0$ тэгшитгэлийн шийдүүд аль нь вэ?", opts: ["x=1, x=6", "x=2, x=3", "x=-2, x=-3", "x=0, x=5"], a: 1 },
+                { q: "3. $\\sin(30^\\circ) = ?$", opts: ["1", "0.5", "0.866", "0"], a: 1 },
+                { q: "4. $A(1, 2)$ ба $B(4, 6)$ цэгүүдийн хоорондох зайг ол.", opts: ["5", "6", "7", "4"], a: 0 },
+                { q: "5. $2^{x+1} = 16$ бол $x$-ийг ол.", opts: ["3", "4", "2", "5"], a: 0 }
+            ],
+            11: [
+                { q: "1. $\\log_2(16) = ?$", opts: ["4", "8", "2", "32"], a: 0 },
+                { q: "2. $f(x) = 3x^2 - 5x$ функцийн уламжлал $f'(x)$-ийг ол.", opts: ["6x - 5", "3x - 5", "6x", "6x^2"], a: 0 },
+                { q: "3. Арифметик прогрессийн $a_1 = 3, d = 4$ бол $a_5 = ?$", opts: ["19", "15", "23", "17"], a: 0 },
+                { q: "4. $\\sin^2(x) + \\cos^2(x) = ?$", opts: ["1", "0", "2", "-1"], a: 0 },
+                { q: "5. $\\log_3(x) = 2$ бол $x = ?$", opts: ["9", "6", "8", "3"], a: 0 }
+            ],
+            12: [
+                { q: "1. $\\int 3x^2 dx = ?$", opts: ["x^3 + C", "6x + C", "3x^3 + C", "x^2 + C"], a: 0 },
+                { q: "2. $\\lim_{x \\to 0} \\frac{\\sin x}{x} = ?$", opts: ["1", "0", "Хязгааргүй", "0.5"], a: 0 },
+                { q: "3. $C(5, 2)$ хослолын тоог ол.", opts: ["10", "20", "6", "15"], a: 0 },
+                { q: "4. Vector $\\vec{a}=(3, 4)$-ийн уртыг ол.", opts: ["5", "7", "25", "1"], a: 0 },
+                { q: "5. $e^{\\ln 5} = ?$", opts: ["5", "e", "1", "0"], a: 0 }
+            ]
+        };
 
-        // Хуудас ачаалагдахад өмнө нь нэвтэрсэн хэрэглэгч байгаа эсэхийг шалгах
+        let isSignUp = false;
+        let activeUser = null;
+        let selectedGrade = 10;
+
         window.onload = function() {
-            const activeUser = JSON.parse(localStorage.getItem('mm_active_user'));
+            activeUser = JSON.parse(localStorage.getItem('mm_active_user'));
             if (activeUser) {
-                showDashboard(activeUser);
+                if (activeUser.level) {
+                    showResult(activeUser.scorePercent, activeUser.level);
+                } else {
+                    showSection('gradeSection');
+                }
             }
         };
 
-        // Бүртгүүлэх / Нэвтрэх горим хооронд шилжих
-        function toggleMode() {
-            isSignUpMode = !isSignUpMode;
-            
-            const nameGroup = document.getElementById('nameGroup');
-            const formTitle = document.getElementById('formTitle');
-            const formSubtitle = document.getElementById('formSubtitle');
-            const submitBtn = document.getElementById('submitBtn');
-            const switchText = document.getElementById('switchText');
-            const switchLink = document.getElementById('switchLink');
-
-            if (isSignUpMode) {
-                nameGroup.style.display = 'block';
-                document.getElementById('fullName').required = true;
-                formTitle.innerText = "Шинэ сурагчийн бүртгэл";
-                formSubtitle.innerText = "Дахин давтагдашгүй аюулгүй хаяг үүсгээрэй";
-                submitBtn.innerText = "Бүртгүүлэх";
-                switchText.innerText = "Бүртгэлтэй юу?";
-                switchLink.innerText = "Нэвтрэх";
-            } else {
-                nameGroup.style.display = 'none';
-                document.getElementById('fullName').required = false;
-                formTitle.innerText = "MathMaster MN";
-                formSubtitle.innerText = "Системд нэвтэрч оноогоо цуглуулаарай";
-                submitBtn.innerText = "Нэвтрэх";
-                switchText.innerText = "Шинэ сурагч уу?";
-                switchLink.innerText = "Шинээр бүртгүүлэх";
-            }
+        function toggleAuthMode() {
+            isSignUp = !isSignUp;
+            document.getElementById('nameGroup').style.display = isSignUp ? 'block' : 'none';
+            document.getElementById('authTitle').innerText = isSignUp ? "Сурагчийн бүртгэл" : "MathMaster MN";
+            document.getElementById('submitBtn').innerText = isSignUp ? "Бүртгүүлэх" : "Нэвтрэх";
+            document.getElementById('switchText').innerText = isSignUp ? "Бүртгэлтэй юу?" : "Шинэ сурагч уу?";
+            document.getElementById('switchLink').innerText = isSignUp ? "Нэвтрэх" : "Шинээр бүртгүүлэх";
         }
 
-        // Нэвтрэх эсвэл Бүртгэх үйлдлийг боловсруулах
         function handleAuth(e) {
             e.preventDefault();
-
             const email = document.getElementById('emailInput').value.trim().toLowerCase();
             const password = document.getElementById('passwordInput').value.trim();
             const fullName = document.getElementById('fullName').value.trim();
-
-            // Бүх бүртгэлтэй хэрэглэгчдийг localStorage-оос авна
             let users = JSON.parse(localStorage.getItem('mm_users_db')) || {};
 
-            if (isSignUpMode) {
-                // 1. БҮРТГҮҮЛЭХ РЕЖИМ
-                if (users[email]) {
-                    alert("Энэ имэйл хаягаар сурагч аль хэдийн бүртгэгдсэн байна! Нэвтрэн орно уу.");
-                    return;
-                }
-
-                // Шинэ хэрэглэгчийг имэйлээр нь давтагдашгүй түлхүүр болгон хадгална
-                const newUser = {
-                    name: fullName,
-                    email: email,
-                    password: password, // Жич: Бодит хэрэглээнд нууц үгийг криптлэх шаардлагатай
-                    score: 0
-                };
-
-                users[email] = newUser;
-                localStorage.setItem('mm_users_db', JSON.stringify(users));
-                localStorage.setItem('mm_active_user', JSON.stringify(newUser));
-
-                alert("Амжилттай бүртгэгдлээ!");
-                showDashboard(newUser);
-
+            if (isSignUp) {
+                if (users[email]) return alert("Имэйл бүртгэлтэй байна!");
+                activeUser = { name: fullName, email: email, password: password };
+                users[email] = activeUser;
             } else {
-                // 2. НЭВТРЭХ РЕЖИМ
-                const user = users[email];
+                if (!users[email] || users[email].password !== password) return alert("Имэйл эсвэл нууц үг буруу!");
+                activeUser = users[email];
+            }
 
-                if (!user) {
-                    alert("Ийм имэйлтэй сурагч бүртгэгдээгүй байна. Эхлээд бүртгүүлнэ үү!");
-                    return;
-                }
+            localStorage.setItem('mm_users_db', JSON.stringify(users));
+            localStorage.setItem('mm_active_user', JSON.stringify(activeUser));
 
-                if (user.password !== password) {
-                    alert("Нууц үг буруу байна! Дахин шалгана уу.");
-                    return;
-                }
-
-                localStorage.setItem('mm_active_user', JSON.stringify(user));
-                showDashboard(user);
+            if (activeUser.level) {
+                showResult(activeUser.scorePercent, activeUser.level);
+            } else {
+                showSection('gradeSection');
             }
         }
 
-        // Амжилттай нэвтэрснийг харуулах
-        function showDashboard(user) {
-            document.getElementById('authFormSection').style.display = 'none';
-            document.getElementById('dashboardSection').style.display = 'block';
+        function startTest(grade) {
+            selectedGrade = grade;
+            const questions = placementTests[grade];
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
 
-            document.getElementById('userDisplayName').innerText = user.name;
-            document.getElementById('userDisplayEmail').innerText = user.email;
-            document.getElementById('userScore').innerText = user.score || 0;
+            questions.forEach((q, qIdx) => {
+                let optsHtml = '';
+                q.opts.forEach((opt, oIdx) => {
+                    optsHtml += `
+                        <label class="option-label">
+                            <input type="radio" name="q${qIdx}" value="${oIdx}" required>
+                            <span>${opt}</span>
+                        </label>`;
+                });
+
+                container.innerHTML += `
+                    <div class="question-card">
+                        <div class="question-text">${q.q}</div>
+                        <div class="options-grid">${optsHtml}</div>
+                    </div>`;
+            });
+
+            document.getElementById('testTitle').innerText = `${grade}-р анги: Түвшин тогтоох шалгалт`;
+            showSection('testSection');
+            if (window.MathJax) MathJax.typesetPromise();
         }
 
-        // Системээс гарах
-        function logout() {
-            localStorage.removeItem('mm_active_user');
-            document.getElementById('dashboardSection').style.display = 'none';
-            document.getElementById('authFormSection').style.display = 'block';
-            document.getElementById('authForm').reset();
+        function submitTest(e) {
+            e.preventDefault();
+            const questions = placementTests[selectedGrade];
+            let correctCount = 0;
+
+            questions.forEach((q, qIdx) => {
+                const selected = document.querySelector(`input[name="q${qIdx}"]:checked`);
+                if (selected && parseInt(selected.value) === q.a) {
+                    correctCount++;
+                }
+            });
+
+            // Хувь тооцоолох
+            const percent = Math.round((correctCount / questions.length) * 100);
+            
+            // ТҮВШИН АНГИЛАХ ЛОГИК (1-8 ТҮВШИН)
+            let level = 1;
+            if (percent < 30) level = 1;
+            else if (percent >= 30 && percent < 40) level = 2;
+            else if (percent >= 40 && percent < 50) level = 3;
+            else if (percent >= 50 && percent < 60) level = 4;
+            else if (percent >= 60 && percent < 70) level = 5;
+            else if (percent >= 70 && percent < 80) level = 6;
+            else if (percent >= 80 && percent < 90) level = 7;
+            else if (percent >= 90) level = 8;
+
+            // Хэрэглэгчийн мэдээллийг хадгалах
+            activeUser.grade = selectedGrade;
+            activeUser.scorePercent = percent;
+            activeUser.level = level;
+
+            let users = JSON.parse(localStorage.getItem('mm_users_db')) || {};
+            users[activeUser.email] = activeUser;
+
+            localStorage.setItem('mm_users_db', JSON.stringify(users));
+            localStorage.setItem('mm_active_user', JSON.stringify(activeUser));
+
+            showResult(percent, level);
+        }
+
+        function showResult(percent, level) {
+            document.getElementById('resName').innerText = activeUser.name || activeUser.email;
+            document.getElementById('resGrade').innerText = activeUser.grade || selectedGrade;
+            document.getElementById('resScore').innerText = `${percent}%`;
+            document.getElementById('resLevel').innerText = `${level}-р Түвшин`;
+            showSection('resultSection');
+        }
+
+        function restartPlacement() {
+            showSection('gradeSection');
+        }
+
+        function showSection(sectionId) {
+            document.getElementById('authSection').style.display = 'none';
+            document.getElementById('gradeSection').style.display = 'none';
+            document.getElementById('testSection').style.display = 'none';
+            document.getElementById('resultSection').style.display = 'none';
+            
+            document.getElementById(sectionId).style.display = 'block';
         }
     </script>
 </body>
