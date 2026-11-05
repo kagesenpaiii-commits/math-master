@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathMaster MN - Нэвтрэх хэсэг</title>
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: #1e293b;
+            padding: 2.5rem;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            border: 1px solid #334155;
+        }
+
+        .auth-title {
+            font-size: 1.8rem;
+            color: #38bdf8;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+        }
+
+        .auth-subtitle {
+            color: #94a3b8;
+            text-align: center;
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #cbd5e1;
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 2px solid #334155;
+            background: #0f172a;
+            color: #fff;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            border-color: #38bdf8;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: background 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: #1d4ed8;
+        }
+
+        .switch-mode {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        .switch-mode a {
+            color: #38bdf8;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .switch-mode a:hover {
+            text-decoration: underline;
+        }
+
+        /* Амжилттай нэвтэрсний дараа харагдах демо самбар */
+        .dashboard {
+            display: none;
+            text-align: center;
+        }
+
+        .user-info {
+            background: #0f172a;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            margin-top: 1rem;
+        }
+
+        .logout-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-card">
+        
+        <!-- 1. БҮРТГҮҮЛЭХ / НЭВТРЭХ ФОРМ -->
+        <div id="authFormSection">
+            <h2 class="auth-title" id="formTitle">MathMaster MN</h2>
+            <p class="auth-subtitle" id="formSubtitle">Системд нэвтэрч оноогоо цуглуулаарай</p>
+
+            <form id="authForm" onsubmit="handleAuth(event)">
+                <!-- Бүртгүүлэх үед л харагдана -->
+                <div class="form-group" id="nameGroup" style="display: none;">
+                    <label for="fullName">Сурагчийн нэр ба анги</label>
+                    <input type="text" id="fullName" class="form-input" placeholder="Жишээ: Анар (10А)">
+                </div>
+
+                <div class="form-group">
+                    <label for="emailInput">Цахим шуудан (Имэйл)</label>
+                    <input type="email" id="emailInput" class="form-input" placeholder="name@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="passwordInput">Нууц үг</label>
+                    <input type="password" id="passwordInput" class="form-input" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn-primary" id="submitBtn">Нэвтрэх</button>
+            </form>
+
+            <div class="switch-mode">
+                <span id="switchText">Шинэ сурагч уу?</span>
+                <a onclick="toggleMode()" id="switchLink">Шинээр бүртгүүлэх</a>
+            </div>
+        </div>
+
+        <!-- 2. НЭВТЭРСНИЙ ДАРААХ ТУРШИЛТЫН СҮЛЖЭЭ (ДАХИН ДАВТАГДАШГҮЙ ПРОФАЙЛ) -->
+        <div id="dashboardSection" class="dashboard">
+            <h2 style="color: #10b981; margin-bottom: 0.5rem;">Амжилттай нэвтэрлээ! 🎉</h2>
+            <div class="user-info">
+                <p style="font-size: 1.1rem; color: #fff; margin-bottom: 5px;">
+                    👤 Нэр: <strong id="userDisplayName">...</strong>
+                </p>
+                <p style="color: #94a3b8; font-size: 0.9em; margin-bottom: 10px;">
+                    ✉️ ID (Имэйл): <span id="userDisplayEmail">...</span>
+                </p>
+                <div style="background: #1e293b; padding: 10px; border-radius: 8px; color: #f59e0b; font-weight: bold;">
+                    ★ Авсан оноо: <span id="userScore">0</span> оноо
+                </div>
+            </div>
+            <button class="logout-btn" onclick="logout()">Системээс гарах</button>
+        </div>
+
+    </div>
+
+    <script>
+        let isSignUpMode = false; // Эхэндээ "Нэвтрэх" горимтой байна
+
+        // Хуудас ачаалагдахад өмнө нь нэвтэрсэн хэрэглэгч байгаа эсэхийг шалгах
+        window.onload = function() {
+            const activeUser = JSON.parse(localStorage.getItem('mm_active_user'));
+            if (activeUser) {
+                showDashboard(activeUser);
+            }
+        };
+
+        // Бүртгүүлэх / Нэвтрэх горим хооронд шилжих
+        function toggleMode() {
+            isSignUpMode = !isSignUpMode;
+            
+            const nameGroup = document.getElementById('nameGroup');
+            const formTitle = document.getElementById('formTitle');
+            const formSubtitle = document.getElementById('formSubtitle');
+            const submitBtn = document.getElementById('submitBtn');
+            const switchText = document.getElementById('switchText');
+            const switchLink = document.getElementById('switchLink');
+
+            if (isSignUpMode) {
+                nameGroup.style.display = 'block';
+                document.getElementById('fullName').required = true;
+                formTitle.innerText = "Шинэ сурагчийн бүртгэл";
+                formSubtitle.innerText = "Дахин давтагдашгүй аюулгүй хаяг үүсгээрэй";
+                submitBtn.innerText = "Бүртгүүлэх";
+                switchText.innerText = "Бүртгэлтэй юу?";
+                switchLink.innerText = "Нэвтрэх";
+            } else {
+                nameGroup.style.display = 'none';
+                document.getElementById('fullName').required = false;
+                formTitle.innerText = "MathMaster MN";
+                formSubtitle.innerText = "Системд нэвтэрч оноогоо цуглуулаарай";
+                submitBtn.innerText = "Нэвтрэх";
+                switchText.innerText = "Шинэ сурагч уу?";
+                switchLink.innerText = "Шинээр бүртгүүлэх";
+            }
+        }
+
+        // Нэвтрэх эсвэл Бүртгэх үйлдлийг боловсруулах
+        function handleAuth(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('emailInput').value.trim().toLowerCase();
+            const password = document.getElementById('passwordInput').value.trim();
+            const fullName = document.getElementById('fullName').value.trim();
+
+            // Бүх бүртгэлтэй хэрэглэгчдийг localStorage-оос авна
+            let users = JSON.parse(localStorage.getItem('mm_users_db')) || {};
+
+            if (isSignUpMode) {
+                // 1. БҮРТГҮҮЛЭХ РЕЖИМ
+                if (users[email]) {
+                    alert("Энэ имэйл хаягаар сурагч аль хэдийн бүртгэгдсэн байна! Нэвтрэн орно уу.");
+                    return;
+                }
+
+                // Шинэ хэрэглэгчийг имэйлээр нь давтагдашгүй түлхүүр болгон хадгална
+                const newUser = {
+                    name: fullName,
+                    email: email,
+                    password: password, // Жич: Бодит хэрэглээнд нууц үгийг криптлэх шаардлагатай
+                    score: 0
+                };
+
+                users[email] = newUser;
+                localStorage.setItem('mm_users_db', JSON.stringify(users));
+                localStorage.setItem('mm_active_user', JSON.stringify(newUser));
+
+                alert("Амжилттай бүртгэгдлээ!");
+                showDashboard(newUser);
+
+            } else {
+                // 2. НЭВТРЭХ РЕЖИМ
+                const user = users[email];
+
+                if (!user) {
+                    alert("Ийм имэйлтэй сурагч бүртгэгдээгүй байна. Эхлээд бүртгүүлнэ үү!");
+                    return;
+                }
+
+                if (user.password !== password) {
+                    alert("Нууц үг буруу байна! Дахин шалгана уу.");
+                    return;
+                }
+
+                localStorage.setItem('mm_active_user', JSON.stringify(user));
+                showDashboard(user);
+            }
+        }
+
+        // Амжилттай нэвтэрснийг харуулах
+        function showDashboard(user) {
+            document.getElementById('authFormSection').style.display = 'none';
+            document.getElementById('dashboardSection').style.display = 'block';
+
+            document.getElementById('userDisplayName').innerText = user.name;
+            document.getElementById('userDisplayEmail').innerText = user.email;
+            document.getElementById('userScore').innerText = user.score || 0;
+        }
+
+        // Системээс гарах
+        function logout() {
+            localStorage.removeItem('mm_active_user');
+            document.getElementById('dashboardSection').style.display = 'none';
+            document.getElementById('authFormSection').style.display = 'block';
+            document.getElementById('authForm').reset();
+        }
+    </script>
+</body>
+</html>
